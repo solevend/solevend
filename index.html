@@ -1,0 +1,960 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Solevend – Distributeurs de café · Marseille</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@300;400;500;600&family=Barlow+Condensed:wght@300;400;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --noir: #0d0d0d; --noir2: #1a1a1a; --gris-fonce: #333;
+  --gris: #666; --gris-clair: #999; --gris-bg: #f4f4f2;
+  --blanc-casse: #f0f0ee; --blanc: #fafafa;
+}
+html { scroll-behavior: smooth; }
+body { font-family: 'Barlow', sans-serif; background: var(--blanc); color: var(--noir); overflow-x: hidden; cursor: none; }
+
+/* CURSEUR */
+.cursor { width:10px;height:10px;background:var(--noir);border-radius:50%;position:fixed;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);mix-blend-mode:difference;transition:width .2s,height .2s; }
+.cursor-ring { width:36px;height:36px;border:1px solid rgba(0,0,0,0.25);border-radius:50%;position:fixed;pointer-events:none;z-index:9998;transform:translate(-50%,-50%);transition:left .12s ease-out,top .12s ease-out,width .3s,height .3s; }
+
+/* NAV */
+nav { position:fixed;top:0;left:0;right:0;z-index:1000;display:flex;align-items:center;justify-content:space-between;padding:1.4rem 5%;transition:background .3s,box-shadow .3s; }
+nav.scrolled { background:rgba(250,250,250,0.97);box-shadow:0 1px 0 rgba(0,0,0,0.08); }
+.nav-logo { font-family:'Bebas Neue',sans-serif;font-size:1.7rem;letter-spacing:.14em;color:var(--noir);text-decoration:none;transition:color .3s; }
+nav ul { list-style:none;display:flex;gap:2.5rem; }
+nav a { font-family:'Barlow Condensed',sans-serif;font-size:.78rem;font-weight:400;letter-spacing:.22em;text-transform:uppercase;color:var(--gris);text-decoration:none;transition:color .2s; }
+nav a:hover { color:var(--noir); }
+.nav-cta { border:1px solid var(--noir);padding:.4rem 1.2rem;color:var(--noir)!important; }
+.nav-cta:hover { background:var(--noir);color:var(--blanc)!important; }
+
+/* ═══ HERO — split blanc/noir comme la carte de visite ═══ */
+#hero {
+  min-height: 100vh; position: relative; overflow: hidden;
+  display: flex; align-items: stretch;
+}
+
+/* Fond gauche blanc, fond droit noir, séparation diagonale */
+.hero-bg {
+  position: absolute; inset: 0; z-index: 0;
+}
+.hero-bg svg { width: 100%; height: 100%; display: block; }
+
+/* Grain texture sur toute la section */
+.grain {
+  position: absolute; inset: 0; pointer-events: none; opacity: .025; z-index: 1;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* Layout hero : colonne gauche (blanc) + colonne droite (noir) */
+.hero-inner {
+  position: relative; z-index: 2; width: 100%;
+  display: grid; grid-template-columns: 1fr 1fr;
+  min-height: 100vh;
+}
+
+/* COLONNE GAUCHE — fond blanc, texte noir */
+.hero-left {
+  display: flex; flex-direction: column; justify-content: center;
+  padding: 9rem 5% 5rem 6%;
+  color: var(--noir);
+}
+
+/* COLONNE DROITE — fond noir (via bg svg), texte blanc */
+.hero-right {
+  display: flex; flex-direction: column; justify-content: center; align-items: flex-start;
+  padding: 9rem 6% 5rem 5%;
+  color: var(--blanc);
+  position: relative;
+}
+
+/* LOGO PRINCIPAL : grand format, vertical sur colonne gauche, + ligne dessous */
+.hero-logo-main {
+  display: inline-block; margin-bottom: 3rem;
+  opacity: 0; animation: fadeUp .8s .1s forwards;
+}
+.hero-logo-main .ltext {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(2.5rem, 5vw, 4.2rem); letter-spacing: .2em;
+  color: var(--noir); display: block; line-height: 1;
+  writing-mode: vertical-rl; text-orientation: mixed;
+  transform: rotate(180deg);
+}
+.hero-logo-main .lline {
+  display: block; width: 1.5px; height: 100%;
+  background: var(--noir); margin-right: .6rem; float: left;
+}
+
+/* Logo hero : SOLE noir sur blanc / VEND blanc sur noir + ligne verticale + ligne dessous */
+.hero-logo-h {
+  display: inline-flex; flex-direction: column;
+  margin-bottom: 2.5rem; opacity: 0; animation: fadeUp .8s .1s forwards;
+}
+.hero-logo-h .lrow { display: flex; align-items: stretch; gap: 0; }
+.hero-logo-h .lrow .line-v {
+  width: 2px; flex-shrink: 0; margin-right: .5rem;
+  background: linear-gradient(to bottom, var(--noir) 50%, var(--blanc) 50%);
+}
+.hero-logo-h .lname {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(3rem, 6vw, 5rem); letter-spacing: .18em;
+  line-height: 1; display: flex; flex-direction: row;
+}
+.hero-logo-h .lname .sole-part {
+  display: block; line-height: 1.05;
+  background: var(--blanc); color: var(--noir); padding: 0 .12em;
+}
+.hero-logo-h .lname .vend-part {
+  display: block; line-height: 1.05;
+  background: var(--noir); color: var(--blanc); padding: 0 .12em;
+}
+.hero-logo-h .lbot {
+  display: block; width: 100%; height: 2px; margin-top: .45rem;
+  background: linear-gradient(to right, var(--noir) 50%, var(--blanc) 50%);
+}
+
+.hero-tag-left {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: .7rem; letter-spacing: .3em; text-transform: uppercase;
+  color: var(--gris); display: flex; align-items: center; gap: 1rem;
+  margin-bottom: 1.8rem; opacity: 0; animation: fadeUp .8s .3s forwards;
+}
+.hero-tag-left::before { content: ''; width: 30px; height: 1px; background: #bbb; }
+
+.hero-title-left {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(2.8rem, 6vw, 5rem); line-height: .92; letter-spacing: .04em;
+  color: var(--noir); margin-bottom: 1.5rem;
+  opacity: 0; animation: fadeUp .8s .5s forwards;
+}
+
+.hero-sub-left {
+  font-size: .9rem; font-weight: 300; line-height: 1.9;
+  color: var(--gris-fonce); max-width: 360px; margin-bottom: 2.5rem;
+  opacity: 0; animation: fadeUp .8s .7s forwards;
+}
+
+.hero-btns {
+  display: flex; gap: 1rem; align-items: center;
+  opacity: 0; animation: fadeUp .8s .9s forwards; flex-wrap: wrap;
+}
+.btn-noir {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: .8rem; letter-spacing: .2em; text-transform: uppercase; font-weight: 700;
+  background: var(--noir); color: var(--blanc);
+  padding: .95rem 2.5rem; text-decoration: none; transition: background .2s, transform .2s;
+}
+.btn-noir:hover { background: var(--gris-fonce); transform: translateY(-2px); }
+.btn-text-noir {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: .8rem; letter-spacing: .2em; text-transform: uppercase;
+  color: var(--gris); text-decoration: none; display: flex; align-items: center; gap: .5rem; transition: color .2s;
+}
+.btn-text-noir:hover { color: var(--noir); }
+
+/* COLONNE DROITE : grain de café géant + texte blanc */
+.hero-right-tag {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: .7rem; letter-spacing: .3em; text-transform: uppercase;
+  color: rgba(255,255,255,.5); display: flex; align-items: center; gap: 1rem;
+  margin-bottom: 2rem; opacity: 0; animation: fadeUp .8s .4s forwards;
+}
+.hero-right-tag::before { content: ''; width: 30px; height: 1px; background: rgba(255,255,255,.3); }
+
+/* Grain de café SVG centré dans la colonne droite */
+.hero-bean-wrap {
+  display: flex; justify-content: center; align-items: center;
+  flex: 1; padding: 2rem 0;
+  opacity: 0; animation: fadeIn 1.2s .6s forwards;
+}
+
+.hero-right-sub {
+  font-size: .85rem; font-weight: 300; line-height: 1.8;
+  color: rgba(255,255,255,.55); max-width: 300px;
+  margin-top: 2rem;
+  opacity: 0; animation: fadeUp .8s .8s forwards;
+}
+
+/* Ligne diagonale séparatrice entre les deux colonnes (visible comme sur la carte) */
+.hero-diag-line {
+  position: absolute; top: 0; left: 50%; bottom: 0;
+  width: 0; z-index: 3; pointer-events: none;
+}
+
+.scroll-hint {
+  position: absolute; bottom: 2rem; left: 50%; transform: translateX(-50%);
+  display: flex; flex-direction: column; align-items: center; gap: .5rem;
+  opacity: 0; animation: fadeIn 1s 1.8s forwards; z-index: 4;
+}
+.scroll-hint span {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: .6rem; letter-spacing: .25em; text-transform: uppercase; color: var(--gris);
+}
+.scroll-line { width: 1px; height: 45px; background: linear-gradient(to bottom, var(--gris), transparent); animation: pulse 2s ease-in-out infinite; }
+
+.arr { display: inline-block; transition: transform .2s; }
+.btn-text-noir:hover .arr { transform: translateX(4px); }
+
+/* ═══ STATS — fond blanc ═══ */
+.stats-band { background:var(--blanc);border-top:1px solid #e8e8e6;border-bottom:1px solid #e8e8e6;padding:2rem 5%;display:flex;justify-content:space-around;align-items:center;gap:2rem;flex-wrap:wrap; }
+.stat { text-align:center; }
+.stat-n { font-family:'Bebas Neue',sans-serif;font-size:2rem;letter-spacing:.08em;color:var(--noir);display:block;line-height:1; }
+.stat-l { font-family:'Barlow Condensed',sans-serif;font-size:.68rem;letter-spacing:.18em;text-transform:uppercase;color:var(--gris-clair);margin-top:.25rem;display:block; }
+.stat-sep { width:1px;height:36px;background:#ddd; }
+
+/* ═══ À PROPOS — fond blanc avec vidéo ═══ */
+#a-propos { background:var(--blanc);padding:7rem 5%;position:relative;overflow:hidden; }
+.apropos-video-bg {
+  position:absolute;inset:0;z-index:0;
+}
+.apropos-video-bg video {
+  width:100%;height:100%;object-fit:cover;
+  opacity:0.08;
+  filter:grayscale(100%);
+}
+.apropos-video-bg::after {
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(to right, rgba(250,250,250,0.92) 40%, rgba(250,250,250,0.75) 100%);
+}
+#a-propos > .reveal { position:relative;z-index:1; }
+.section-label { font-family:'Barlow Condensed',sans-serif;font-size:.68rem;letter-spacing:.28em;text-transform:uppercase;color:var(--gris-clair);display:flex;align-items:center;gap:1rem;margin-bottom:1.5rem; }
+.section-label::before { content:'';width:28px;height:1px;background:#ccc; }
+.section-title { font-family:'Bebas Neue',sans-serif;font-size:clamp(2.5rem,5vw,4rem);letter-spacing:.05em;line-height:.95;color:var(--noir); }
+#contact .section-title { color:var(--blanc); }
+
+.apropos-grid { display:grid;grid-template-columns:1fr 1.2fr;gap:6rem;align-items:center;margin-top:4rem; }
+.apropos-card-wrap { position:relative; }
+.apropos-card { background:var(--noir);aspect-ratio:3/4;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;overflow:hidden; }
+.apropos-card svg { position:absolute;inset:0;width:100%;height:100%; }
+.apropos-card-inner { position:relative;z-index:2;text-align:center; }
+.apropos-card-logo { font-family:'Bebas Neue',sans-serif;font-size:2.8rem;letter-spacing:.16em;color:var(--blanc);display:inline-block; }
+.apropos-card-logo .sole { background:var(--blanc);color:var(--noir);padding:0 .12em; }
+.apropos-card-lline { width:100%;height:1px;background:rgba(255,255,255,.4);margin-top:.4rem;display:block; }
+.apropos-card-city { font-family:'Barlow Condensed',sans-serif;font-size:.65rem;letter-spacing:.22em;text-transform:uppercase;color:rgba(255,255,255,.35);margin-top:.8rem;display:block; }
+.apropos-float { position:absolute;bottom:-1.5rem;right:-1.5rem;background:var(--blanc);border:1px solid #e0e0de;padding:1.2rem 1.5rem; }
+.apropos-float strong { font-family:'Bebas Neue',sans-serif;font-size:2rem;letter-spacing:.1em;display:block;line-height:1; }
+.apropos-float span { font-family:'Barlow Condensed',sans-serif;font-size:.62rem;letter-spacing:.15em;text-transform:uppercase;color:var(--gris-clair); }
+.apropos-desc { font-size:.95rem;font-weight:300;line-height:1.9;color:var(--gris-fonce);margin-top:1.5rem;margin-bottom:2.5rem; }
+.features { display:flex;flex-direction:column; }
+.feat { display:flex;gap:1.5rem;align-items:flex-start;padding:1.1rem 0;border-bottom:1px solid #ebebea;transition:padding-left .2s; }
+.feat:first-child { border-top:1px solid #ebebea; }
+.feat:hover { padding-left:.5rem; }
+.feat-num { font-family:'Bebas Neue',sans-serif;font-size:1.1rem;color:#ccc;letter-spacing:.1em;flex-shrink:0;width:28px; }
+.feat h4 { font-size:.88rem;font-weight:600;color:var(--noir);margin-bottom:.2rem; }
+.feat p { font-size:.82rem;font-weight:300;color:var(--gris);line-height:1.6; }
+
+/* ═══ SERVICES — fond gris clair ═══ */
+#services { background:var(--gris-bg);padding:7rem 5%; }
+.services-top { display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:end;margin-bottom:4rem; }
+.services-desc { font-size:.95rem;font-weight:300;line-height:1.9;color:var(--gris-fonce); }
+.services-grid { display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem; }
+.svc { background:var(--blanc);border:1px solid #e8e8e6;padding:2.5rem 2rem;position:relative;overflow:hidden;transition:transform .3s,box-shadow .3s; }
+.svc::after { content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:var(--noir);transform:scaleX(0);transform-origin:left;transition:transform .35s; }
+.svc:hover { transform:translateY(-4px);box-shadow:0 8px 30px rgba(0,0,0,.08); }
+.svc:hover::after { transform:scaleX(1); }
+.svc-num { font-family:'Bebas Neue',sans-serif;font-size:3.5rem;color:#ececea;letter-spacing:.1em;line-height:1;margin-bottom:1.5rem; }
+.svc-icon { margin-bottom:1.2rem; }
+.svc h3 { font-family:'Barlow Condensed',sans-serif;font-size:1.15rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--noir);margin-bottom:.8rem; }
+.svc p { font-size:.85rem;font-weight:300;line-height:1.8;color:var(--gris); }
+.svc-tag { display:inline-block;margin-top:1.5rem;font-family:'Barlow Condensed',sans-serif;font-size:.65rem;letter-spacing:.18em;text-transform:uppercase;color:var(--gris-clair);border:1px solid #ddd;padding:.25rem .7rem; }
+
+/* ═══ DISTRIBUTEUR — fond blanc ═══ */
+#distributeur { background:var(--blanc); padding:7rem 5%; }
+.distrib-header-row { display:flex;align-items:flex-end;justify-content:space-between;gap:2rem;flex-wrap:wrap;margin-bottom:3rem; }
+
+/* Tabs navigation */
+.distrib-tabs { display:flex;gap:0;border:1px solid #e8e8e6; }
+.distrib-tab { font-family:'Barlow Condensed',sans-serif;background:none;border:none;border-right:1px solid #e8e8e6;padding:.9rem 1.5rem;cursor:none;display:flex;flex-direction:column;gap:.15rem;transition:background .2s;text-align:left; }
+.distrib-tab:last-child { border-right:none; }
+.distrib-tab:hover { background:var(--gris-bg); }
+.distrib-tab.active { background:var(--noir); }
+.tab-num { font-size:.62rem;letter-spacing:.2em;color:var(--gris-clair);font-weight:400; }
+.distrib-tab.active .tab-num { color:rgba(255,255,255,.4); }
+.tab-name { font-size:.82rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--noir); }
+.distrib-tab.active .tab-name { color:var(--blanc); }
+
+/* Slides */
+.distrib-slides { position:relative; }
+.distrib-slide { display:none; }
+.distrib-slide.active { display:block;animation:fadeIn .4s ease; }
+
+/* Layout 2 colonnes */
+.distrib-layout { display:grid;grid-template-columns:1fr 1fr;gap:6rem;align-items:start; }
+.distrib-model-name { font-family:'Bebas Neue',sans-serif;font-size:clamp(2.5rem,4vw,3.5rem);letter-spacing:.06em;line-height:.95;color:var(--noir);margin-bottom:.5rem; }
+.distrib-tagline { font-size:.9rem;font-weight:300;color:var(--gris);margin-bottom:2rem; }
+.distrib-tagline strong { color:var(--noir);font-weight:600; }
+
+/* Icônes */
+.distrib-icons { display:flex;gap:1.5rem;margin-bottom:2rem;flex-wrap:wrap; }
+.distrib-icon-item { display:flex;flex-direction:column;align-items:center;gap:.7rem;text-align:center;flex:1;min-width:70px; }
+.distrib-icon-circle { width:52px;height:52px;border-radius:50%;background:var(--noir);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:transform .2s; }
+.distrib-icon-item:hover .distrib-icon-circle { transform:scale(1.08); }
+.distrib-icon-item span { font-family:'Barlow Condensed',sans-serif;font-size:.75rem;font-weight:500;letter-spacing:.04em;color:var(--gris-fonce);line-height:1.4; }
+
+/* Description */
+.distrib-desc { font-size:.9rem;font-weight:300;line-height:1.9;color:var(--gris-fonce);margin-bottom:2rem; }
+.distrib-desc strong { color:var(--noir);font-weight:600; }
+
+/* Fiche technique */
+.distrib-fiche { background:var(--gris-bg);border:1px solid #e8e8e6;padding:1.5rem 2rem; }
+.distrib-fiche-title { font-family:'Barlow Condensed',sans-serif;font-size:.72rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--noir);margin-bottom:.9rem; }
+.distrib-fiche-list { list-style:none;display:flex;flex-direction:column;gap:.5rem; }
+.distrib-fiche-list li { font-size:.83rem;font-weight:300;color:var(--gris);padding-left:1.1rem;position:relative;line-height:1.5; }
+.distrib-fiche-list li::before { content:'•';position:absolute;left:0;color:var(--noir); }
+
+/* Photo droite */
+.distrib-right { position:sticky;top:8rem; }
+.distrib-photo-placeholder { background:var(--gris-bg);border:1px solid #e8e8e6;aspect-ratio:3/4;display:flex;align-items:center;justify-content:center;overflow:hidden; }
+.distrib-photo-inner { display:flex;flex-direction:column;align-items:center;gap:1rem;text-align:center;padding:2rem; }
+.distrib-photo-label { font-family:'Bebas Neue',sans-serif;font-size:1.2rem;letter-spacing:.1em;color:#bbb;line-height:1.3; }
+.distrib-photo-sub { font-family:'Barlow Condensed',sans-serif;font-size:.62rem;letter-spacing:.14em;text-transform:uppercase;color:#ccc; }
+.distrib-badge { display:inline-block;margin-top:1rem;font-family:'Barlow Condensed',sans-serif;font-size:.68rem;letter-spacing:.18em;text-transform:uppercase;color:var(--gris);border:1px solid #ddd;padding:.3rem .8rem; }
+
+/* Navigation flèches + dots */
+.distrib-nav { display:flex;align-items:center;justify-content:center;gap:1.5rem;margin-bottom:2.5rem; }
+.distrib-arrow { font-family:'Barlow',sans-serif;font-size:1.1rem;background:none;border:1px solid #ddd;color:var(--gris);width:40px;height:40px;display:flex;align-items:center;justify-content:center;cursor:none;transition:background .2s,color .2s,border-color .2s; }
+.distrib-arrow:hover { background:var(--noir);color:var(--blanc);border-color:var(--noir); }
+.distrib-dots { display:flex;gap:.6rem;align-items:center; }
+.distrib-dot { width:8px;height:8px;border-radius:50%;background:#ddd;cursor:none;transition:background .2s,transform .2s; }
+.distrib-dot.active { background:var(--noir);transform:scale(1.3); }
+
+/* ═══ POURQUOI NOUS — fond blanc ═══ */
+#pourquoi { background:var(--blanc);padding:7rem 5%; }
+.pourquoi-grid { display:grid;grid-template-columns:1fr 1fr;gap:5rem;align-items:center;margin-top:4rem; }
+.pourquoi-list { display:flex;flex-direction:column;gap:2rem; }
+.pq-item { display:flex;gap:1.5rem;align-items:flex-start; }
+.pq-icon { width:44px;height:44px;border:1px solid #e0e0de;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:1.2rem; }
+.pq-item h4 { font-size:.92rem;font-weight:600;color:var(--noir);margin-bottom:.3rem; }
+.pq-item p { font-size:.83rem;font-weight:300;color:var(--gris);line-height:1.7; }
+.pourquoi-visual { background:var(--gris-bg);padding:3rem;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2rem;min-height:420px; }
+.pq-big-bean { opacity:.12; }
+.pq-tagline { font-family:'Bebas Neue',sans-serif;font-size:2.5rem;letter-spacing:.1em;color:var(--noir);text-align:center;line-height:1.1; }
+.pq-sub { font-family:'Barlow Condensed',sans-serif;font-size:.7rem;letter-spacing:.22em;text-transform:uppercase;color:var(--gris-clair);text-align:center; }
+
+/* ═══ CONTACT — fond noir ═══ */
+#contact { background:var(--noir);padding:7rem 5%; }
+#contact .section-label { color:var(--gris-clair); }
+#contact .section-label::before { background:#444; }
+.contact-grid { display:grid;grid-template-columns:1fr 1fr;gap:6rem;margin-top:4rem; }
+.contact-intro { font-size:.95rem;font-weight:300;line-height:1.9;color:var(--gris-clair);margin-bottom:2.5rem; }
+.cinfo-list { display:flex;flex-direction:column; }
+.cinfo { display:flex;gap:1.5rem;align-items:flex-start;padding:1.1rem 0;border-bottom:1px solid #1e1e1e;transition:padding-left .2s; }
+.cinfo:first-child { border-top:1px solid #1e1e1e; }
+.cinfo:hover { padding-left:.5rem; }
+.cinfo-lbl { font-family:'Barlow Condensed',sans-serif;font-size:.62rem;letter-spacing:.2em;text-transform:uppercase;color:var(--gris);flex-shrink:0;width:52px;padding-top:.15rem; }
+.cinfo-val { font-size:.88rem;font-weight:300;color:var(--blanc-casse);line-height:1.7; }
+.cinfo-val a { color:inherit;text-decoration:none; }
+.cinfo-val a:hover { color:var(--blanc);text-decoration:underline; }
+.cform { display:flex;flex-direction:column; }
+.frow { position:relative;border-bottom:1px solid #2a2a2a; }
+.frow label { display:block;font-family:'Barlow Condensed',sans-serif;font-size:.62rem;letter-spacing:.2em;text-transform:uppercase;color:var(--gris);padding-top:1.4rem;margin-bottom:.4rem; }
+.frow input,.frow textarea { width:100%;background:transparent;border:none;outline:none;font-family:'Barlow',sans-serif;font-size:.92rem;font-weight:300;color:var(--blanc);padding-bottom:.9rem; }
+.frow textarea { resize:none;min-height:100px; }
+.frow::after { content:'';position:absolute;bottom:-1px;left:0;right:100%;height:1px;background:var(--blanc);transition:right .4s; }
+.frow:focus-within::after { right:0; }
+.fsubmit { margin-top:2.5rem;align-self:flex-start;font-family:'Barlow Condensed',sans-serif;font-size:.8rem;letter-spacing:.25em;text-transform:uppercase;font-weight:700;background:var(--blanc);color:var(--noir);border:none;padding:1rem 3rem;cursor:none;transition:background .2s,transform .2s; }
+.fsubmit:hover { background:var(--blanc-casse);transform:translateY(-2px); }
+.fsuccess { display:none;margin-top:1rem;font-size:.82rem;color:var(--gris-clair); }
+
+/* ═══ FOOTER — fond gris clair ═══ */
+footer { background:var(--gris-bg);border-top:1px solid #e8e8e6;padding:2.5rem 5%;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem; }
+.footer-logo { font-family:'Bebas Neue',sans-serif;font-size:1.5rem;letter-spacing:.14em;color:var(--noir);text-decoration:none; }
+.footer-copy { font-size:.75rem;color:var(--gris-clair);letter-spacing:.05em; }
+.footer-city { font-family:'Barlow Condensed',sans-serif;font-size:.65rem;letter-spacing:.2em;text-transform:uppercase;color:#bbb;margin-top:.2rem; }
+
+/* REVEAL */
+.reveal { opacity:0;transform:translateY(28px);transition:opacity .7s ease,transform .7s ease; }
+.reveal.on { opacity:1;transform:translateY(0); }
+
+/* ANIMATIONS */
+@keyframes fadeUp { from{opacity:0;transform:translateY(18px);}to{opacity:1;transform:translateY(0);} }
+@keyframes fadeIn { from{opacity:0;}to{opacity:1;} }
+@keyframes spin { from{transform:rotate(0);}to{transform:rotate(360deg);} }
+@keyframes pulse { 0%,100%{opacity:.3;}50%{opacity:1;} }
+
+/* RESPONSIVE */
+@media(max-width:900px){
+  nav ul{display:none;}
+  .hero-inner{grid-template-columns:1fr;}
+  .hero-right{min-height:40vh;}
+  .apropos-grid,.services-top,.pourquoi-grid,.contact-grid,.distrib-layout{grid-template-columns:1fr;gap:2.5rem;}
+  .services-grid{grid-template-columns:1fr;}
+  .hero-btns{flex-direction:column;align-items:flex-start;}
+  .distrib-right{position:static;}
+}
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cur"></div>
+<div class="cursor-ring" id="curR"></div>
+
+<nav id="nav">
+  <a href="#hero" class="nav-logo">SOLEVEND</a>
+  <ul>
+    <li><a href="#hero">Accueil</a></li>
+    <li><a href="#a-propos">À propos</a></li>
+    <li><a href="#services">Services</a></li>
+    <li><a href="#distributeur">Notre distributeur</a></li>
+    <li><a href="#pourquoi">Pourquoi nous</a></li>
+    <li><a href="#contact" class="nav-cta">Contact</a></li>
+  </ul>
+</nav>
+
+<!-- ═══ HERO — split blanc/noir comme la carte de visite ═══ -->
+<section id="hero">
+
+  <!-- Fond SVG : gauche blanc, droite noire, séparation diagonale + dégradé -->
+  <div class="hero-bg">
+    <svg viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+      <!-- Fond blanc global -->
+      <rect width="1440" height="900" fill="#f8f8f8"/>
+      <!-- Partie noire droite avec bord diagonal -->
+      <polygon points="660,0 1440,0 1440,900 700,900" fill="#0d0d0d"/>
+      <!-- Dégradé sur 1/4 gauche de la zone noire (noir vers blanc) -->
+      <defs>
+        <linearGradient id="fadeLeft" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stop-color="#f8f8f8"/>
+          <stop offset="100%" stop-color="#0d0d0d" stop-opacity="0"/>
+        </linearGradient>
+        <linearGradient id="fadeRight" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stop-color="#0d0d0d" stop-opacity="0"/>
+          <stop offset="100%" stop-color="#0d0d0d"/>
+        </linearGradient>
+      </defs>
+      <!-- Zone de dégradé à cheval sur la séparation (environ 1/4 écran) -->
+      <rect x="540" y="0" width="280" height="900" fill="url(#fadeRight)" opacity="0.85"/>
+      <!-- Ligne fine de séparation -->
+      <line x1="680" y1="0" x2="680" y2="900" stroke="rgba(255,255,255,0.08)" stroke-width="1"/>
+    </svg>
+  </div>
+  <div class="grain"></div>
+
+  <div class="hero-inner">
+    <!-- COLONNE GAUCHE : fond blanc, contenu noir -->
+    <div class="hero-left">
+
+      <!-- Logo principal : SOLE noir sur blanc / VEND blanc sur noir, ligne verticale + dessous -->
+      <div class="hero-logo-h">
+        <div class="lrow">
+          <div class="lname">
+            <span class="sole-part">SOLE</span><span class="vend-part">VEND</span>
+          </div>
+        </div>
+        <span class="lbot"></span>
+      </div>
+
+      <div class="hero-tag-left">Marseille · Distributeurs de café</div>
+      <h1 class="hero-title-left">Le café frais,<br>livré chez vous.</h1>
+      <p class="hero-sub-left">Torréfaction locale et maîtrisée, installation et entretien de distributeurs automatiques. <strong style="color:var(--noir);font-weight:600;">100% marseillais.</strong></p>
+      <div class="hero-btns">
+        <a href="#services" class="btn-noir">Nos services</a>
+        <a href="#contact" class="btn-text-noir">Nous contacter <span class="arr">→</span></a>
+      </div>
+    </div>
+
+    <!-- COLONNE DROITE : fond noir, contenu blanc + grain de café -->
+    <div class="hero-right">
+      <div class="hero-right-tag">Torréfaction locale</div>
+
+      <!-- Grain de café dessiné fidèle à la photo : ovale sombre, deux courbes blanches en S -->
+      <div class="hero-bean-wrap">
+        <svg viewBox="0 0 260 320" width="220" height="270" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <!-- Halo blanc autour du grain (comme sur la carte) -->
+          <ellipse cx="130" cy="162" rx="98" ry="118" fill="rgba(255,255,255,0.06)"/>
+          <!-- Corps du grain : ovale sombre quasi-noir avec légère texture -->
+          <ellipse cx="130" cy="160" rx="88" ry="108" fill="#111"/>
+          <!-- Contour du grain légèrement plus clair -->
+          <ellipse cx="130" cy="160" rx="88" ry="108" stroke="rgba(255,255,255,0.12)" stroke-width="1.5" fill="none"/>
+          <!-- Texture halftone simulée : dégradé interne sombre -->
+          <ellipse cx="130" cy="160" rx="88" ry="108" fill="url(#beanGrad)"/>
+          <defs>
+            <radialGradient id="beanGrad" cx="45%" cy="42%" r="65%">
+              <stop offset="0%" stop-color="#2a2a2a"/>
+              <stop offset="60%" stop-color="#0a0a0a"/>
+              <stop offset="100%" stop-color="#1a1a1a"/>
+            </radialGradient>
+          </defs>
+          <!-- Courbe blanche principale gauche (S épais) -->
+          <path d="M108 75 C100 100, 115 125, 108 155 C101 185, 88 205, 95 235" stroke="rgba(255,255,255,0.88)" stroke-width="5" fill="none" stroke-linecap="round"/>
+          <!-- Courbe blanche secondaire droite (S plus fin) -->
+          <path d="M142 72 C132 98, 148 124, 140 155 C132 186, 118 208, 126 238" stroke="rgba(255,255,255,0.6)" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+          <!-- Reflet léger en haut à gauche -->
+          <ellipse cx="100" cy="105" rx="18" ry="10" fill="rgba(255,255,255,0.07)" transform="rotate(-30 100 105)"/>
+        </svg>
+      </div>
+
+      <p class="hero-right-sub">Grain sélectionné et torréfié localement à Marseille, pour une tasse d'exception à chaque utilisation.</p>
+    </div>
+  </div>
+
+  <div class="scroll-hint"><span>Défiler</span><div class="scroll-line"></div></div>
+</section>
+
+<!-- ═══ STATS — fond blanc ═══ -->
+<div class="stats-band reveal">
+  <div class="stat"><span class="stat-n">100%</span><span class="stat-l">Local · Marseille</span></div>
+  <div class="stat-sep"></div>
+  <div class="stat">
+    <span class="stat-n" style="display:flex;justify-content:center;align-items:center;height:2rem;">
+      <svg viewBox="0 0 44 44" width="28" height="28" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <ellipse cx="22" cy="22" rx="15" ry="10.5" stroke="#0d0d0d" stroke-width="1.3" fill="none"/>
+        <path d="M22 11.8C18.5 14.2,17 17.5,17.5 22C18 26.5,20.5 29.5,22 32.2" stroke="#0d0d0d" stroke-width="1.1" fill="none" stroke-linecap="round"/>
+        <path d="M19.5 12.8C17 15.5,16 19,17 22.5" stroke="#0d0d0d" stroke-width=".7" fill="none" stroke-linecap="round" opacity=".4"/>
+        <path d="M24.5 31.2C27 28.5,28 25,27 21.5" stroke="#0d0d0d" stroke-width=".7" fill="none" stroke-linecap="round" opacity=".4"/>
+      </svg>
+    </span>
+    <span class="stat-l">Torréfaction maîtrisée</span>
+  </div>
+  <div class="stat-sep"></div>
+  <div class="stat"><span class="stat-n">13014</span><span class="stat-l">Bd de Plombières</span></div>
+  <div class="stat-sep"></div>
+  <div class="stat"><span class="stat-n">SAV</span><span class="stat-l">Installation & entretien</span></div>
+</div>
+
+<!-- ═══ À PROPOS — fond blanc + vidéo discrète ═══ -->
+<section id="a-propos">
+  <div class="apropos-video-bg">
+    <video autoplay muted loop playsinline>
+      <source src="bg-video.mp4" type="video/mp4">
+    </video>
+  </div>
+  <div class="reveal">
+    <div class="section-label">Qui sommes-nous</div>
+    <div class="apropos-grid">
+      <div class="apropos-card-wrap">
+        <div class="apropos-card">
+          <svg viewBox="0 0 400 530" xmlns="http://www.w3.org/2000/svg">
+            <rect width="400" height="530" fill="#0d0d0d"/>
+            <polygon points="0,0 240,0 0,340" fill="#1a1a1a"/>
+            <line x1="240" y1="0" x2="0" y2="340" stroke="rgba(255,255,255,0.07)" stroke-width="1"/>
+          </svg>
+          <div class="apropos-card-inner">
+            <span class="apropos-card-logo"><span class="sole">SOLE</span>VEND</span>
+            <span class="apropos-card-lline"></span>
+            <span class="apropos-card-city">Marseille · France</span>
+          </div>
+        </div>
+        <div class="apropos-float"><strong>BDR</strong><span>Bouches-du-Rhône</span></div>
+      </div>
+      <div>
+        <h2 class="section-title">Une passion<br>du café,<br>ancrée à<br>Marseille</h2>
+        <p class="apropos-desc">Solevend est une entreprise marseillaise spécialisée dans la distribution automatique de boissons chaudes. Notre mission : apporter une expérience café de qualité dans vos locaux, avec un grain torréfié localement et un service de proximité irréprochable.</p>
+        <div class="features">
+          <div class="feat"><span class="feat-num">01</span><div><h4>Torréfaction locale et maîtrisée</h4><p>Cafés sélectionnés et torréfiés à Marseille pour une fraîcheur et une saveur optimales à chaque tasse.</p></div></div>
+          <div class="feat"><span class="feat-num">02</span><div><h4>Ancrage 100% marseillais</h4><p>Présents sur Marseille et ses environs, nous intervenons avec rapidité et connaissance du terrain.</p></div></div>
+          <div class="feat"><span class="feat-num">03</span><div><h4>Service clé en main</h4><p>De l'installation à la maintenance, nous gérons tout pour un distributeur toujours opérationnel.</p></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ SERVICES — fond gris clair ═══ -->
+<section id="services">
+  <div class="reveal">
+    <div class="section-label">Ce que nous faisons</div>
+    <div class="services-top">
+      <h2 class="section-title">Nos<br>services</h2>
+      <p class="services-desc">Des solutions adaptées à tous vos espaces professionnels — bureaux, ateliers, salles d'attente — pour un café de qualité, toujours disponible.</p>
+    </div>
+    <div class="services-grid">
+      <div class="svc">
+        <div class="svc-num">01</div>
+        <div class="svc-icon"><svg viewBox="0 0 36 36" width="28" height="28" fill="none"><circle cx="18" cy="18" r="14" stroke="#ccc" stroke-width="1"/><path d="M12 18h12M18 12v12" stroke="#999" stroke-width="1.2" stroke-linecap="round"/></svg></div>
+        <h3>Installation de distributeurs</h3>
+        <p>Sélection du modèle adapté à votre volume et votre espace, puis installation complète sur site. Nous nous occupons de tout.</p>
+        <span class="svc-tag">Clé en main</span>
+      </div>
+      <div class="svc">
+        <div class="svc-num">02</div>
+        <div class="svc-icon">
+          <svg viewBox="0 0 36 36" width="28" height="28" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <ellipse cx="18" cy="18" rx="12" ry="8.5" stroke="#ccc" stroke-width="1.1" fill="none"/>
+            <path d="M18 9.8C15 12,13.5 15,14 18C14.5 21.5,16.5 24,18 26.2" stroke="#999" stroke-width="1" fill="none" stroke-linecap="round"/>
+            <path d="M16 10.5C13.5 13,12.5 16.5,13.5 19.5" stroke="#bbb" stroke-width=".7" fill="none" stroke-linecap="round"/>
+            <path d="M20 25.5C22.5 23,23.5 19.5,22.5 16.5" stroke="#bbb" stroke-width=".7" fill="none" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <h3>Torréfaction locale</h3>
+        <p>Notre café est torréfié localement à Marseille. Arômes maîtrisés, fraîcheur garantie, tasse d'exception à chaque utilisation.</p>
+        <span class="svc-tag">100% Marseille</span>
+      </div>
+      <div class="svc">
+        <div class="svc-num">03</div>
+        <div class="svc-icon"><svg viewBox="0 0 36 36" width="28" height="28" fill="none"><path d="M10 26l4-4m8-8l3-3a2 2 0 00-3-3l-3 3m0 0l-4 4m0 0l-2-2" stroke="#ccc" stroke-width="1.2" stroke-linecap="round"/></svg></div>
+        <h3>Maintenance & réappro</h3>
+        <p>Entretien régulier et réapprovisionnement en consommables pour assurer une disponibilité permanente de votre machine.</p>
+        <span class="svc-tag">Zéro souci</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ NOTRE DISTRIBUTEUR — fond blanc ═══ -->
+<section id="distributeur">
+  <div class="reveal">
+    <div class="section-label">Notre équipement</div>
+    <div class="distrib-header-row">
+      <h2 class="section-title">Nos distributeurs</h2>
+      <!-- Tabs de navigation -->
+      <div class="distrib-tabs">
+        <button class="distrib-tab active" onclick="showSlide(0)">
+          <span class="tab-num">01</span>
+          <span class="tab-name">Barista Digital XL</span>
+        </button>
+        <button class="distrib-tab" onclick="showSlide(1)">
+          <span class="tab-num">02</span>
+          <span class="tab-name">Barista Compact</span>
+        </button>
+        <button class="distrib-tab" onclick="showSlide(2)">
+          <span class="tab-num">03</span>
+          <span class="tab-name">Barista Essential</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Navigation flèches centrées en haut -->
+    <div class="distrib-nav">
+      <button class="distrib-arrow" onclick="prevSlide()" aria-label="Précédent">←</button>
+      <div class="distrib-dots">
+        <span class="distrib-dot active" onclick="showSlide(0)"></span>
+        <span class="distrib-dot" onclick="showSlide(1)"></span>
+        <span class="distrib-dot" onclick="showSlide(2)"></span>
+      </div>
+      <button class="distrib-arrow" onclick="nextSlide()" aria-label="Suivant">→</button>
+    </div>
+
+    <!-- SLIDES -->
+    <div class="distrib-slides">
+
+      <!-- SLIDE 1 : Barista Digital XL -->
+      <div class="distrib-slide active" id="slide-0">
+        <div class="distrib-layout">
+          <div class="distrib-left">
+            <h3 class="distrib-model-name">Barista Digital XL</h3>
+            <p class="distrib-tagline">Le fleuron de notre gamme — grand volume, grande expérience</p>
+            <div class="distrib-icons">
+              <div class="distrib-icon-item">
+                <div class="distrib-icon-circle">
+                  <svg viewBox="0 0 32 32" width="20" height="20" fill="none"><circle cx="16" cy="12" r="7" stroke="white" stroke-width="1.5" fill="none"/><path d="M13 19v4M19 19v4M13 23h6" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg>
+                </div>
+                <span>Expérience<br>innovante</span>
+              </div>
+              <div class="distrib-icon-item">
+                <div class="distrib-icon-circle">
+                  <svg viewBox="0 0 32 32" width="20" height="20" fill="none"><ellipse cx="16" cy="16" rx="10" ry="7" stroke="white" stroke-width="1.5" fill="none"/><path d="M16 9.5C13 11,12 13,12.5 16C13 19,14.5 21,16 22.5" stroke="white" stroke-width="1.2" fill="none" stroke-linecap="round"/></svg>
+                </div>
+                <span>Boissons<br>de qualité</span>
+              </div>
+              <div class="distrib-icon-item">
+                <div class="distrib-icon-circle">
+                  <svg viewBox="0 0 32 32" width="20" height="20" fill="none"><rect x="6" y="7" width="20" height="14" rx="2" stroke="white" stroke-width="1.5" fill="none"/><rect x="9" y="10" width="14" height="8" rx="1" fill="rgba(255,255,255,0.2)" stroke="white" stroke-width=".8"/><path d="M13 25h6M16 21v4" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg>
+                </div>
+                <span>Interface<br>interactive</span>
+              </div>
+            </div>
+            <p class="distrib-desc">Matériel neuf et exclusif dernière génération — double offre de cafés en grains, <strong>large choix de recettes</strong> gourmandes agrémentées de sirops et toppings, gamme de thés et mignardises en accompagnement.</p>
+            <div class="distrib-fiche">
+              <p class="distrib-fiche-title">Fiche technique</p>
+              <ul class="distrib-fiche-list">
+                <li>Capacité 1000 gobelets — fort débit</li>
+                <li>Double contenance : 15cl et 30cl</li>
+                <li>Écran tactile 32 pouces couleur</li>
+                <li>Mise en veille programmable — classe B</li>
+              </ul>
+            </div>
+            <a href="#contact" class="btn-noir" style="margin-top:2rem;display:inline-block;">Demander une démo →</a>
+          </div>
+          <div class="distrib-right">
+            <div class="distrib-photo-placeholder">
+              <!-- Remplacer par : <img src="distributeur-xl.jpg" alt="Barista Digital XL" style="width:100%;height:100%;object-fit:contain;"> -->
+              <div class="distrib-photo-inner">
+                <svg viewBox="0 0 120 200" width="80" height="133" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <rect x="10" y="4" width="100" height="192" rx="6" stroke="#ccc" stroke-width="1.5" fill="none"/>
+                  <rect x="18" y="14" width="84" height="60" rx="3" fill="#f0f0ee" stroke="#ddd" stroke-width="1"/>
+                  <rect x="22" y="18" width="76" height="52" rx="2" fill="#e8e8e6" stroke="#ddd" stroke-width=".8"/>
+                  <rect x="25" y="21" width="34" height="20" rx="1.5" fill="#ddd"/>
+                  <rect x="61" y="21" width="34" height="20" rx="1.5" fill="#e0e0de"/>
+                  <rect x="25" y="44" width="70" height="5" rx="1" fill="#ddd"/>
+                  <circle cx="38" cy="95" r="7" stroke="#ccc" stroke-width="1" fill="none"/>
+                  <circle cx="60" cy="95" r="7" stroke="#ccc" stroke-width="1" fill="none"/>
+                  <circle cx="82" cy="95" r="7" stroke="#ccc" stroke-width="1" fill="none"/>
+                  <rect x="18" y="115" width="84" height="50" rx="2" stroke="#ddd" stroke-width="1" fill="#f5f5f3"/>
+                  <path d="M35 143 Q60 155 85 143" stroke="#ccc" stroke-width="1.2" fill="none"/>
+                  <rect x="28" y="174" width="64" height="16" rx="2" stroke="#ddd" stroke-width="1" fill="none"/>
+                </svg>
+                <p class="distrib-photo-label">Photo du<br>distributeur</p>
+                <p class="distrib-photo-sub">Remplacer par votre image</p>
+              </div>
+            </div>
+            <div class="distrib-badge">Gamme Premium</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SLIDE 2 : Barista Compact -->
+      <div class="distrib-slide" id="slide-1">
+        <div class="distrib-layout">
+          <div class="distrib-left">
+            <h3 class="distrib-model-name">Barista Compact</h3>
+            <p class="distrib-tagline">La solution idéale pour les espaces intermédiaires</p>
+            <div class="distrib-icons">
+              <div class="distrib-icon-item">
+                <div class="distrib-icon-circle">
+                  <svg viewBox="0 0 32 32" width="20" height="20" fill="none"><rect x="6" y="6" width="20" height="20" rx="3" stroke="white" stroke-width="1.5" fill="none"/><path d="M10 16h12M16 10v12" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg>
+                </div>
+                <span>Format<br>compact</span>
+              </div>
+              <div class="distrib-icon-item">
+                <div class="distrib-icon-circle">
+                  <svg viewBox="0 0 32 32" width="20" height="20" fill="none"><ellipse cx="16" cy="16" rx="10" ry="7" stroke="white" stroke-width="1.5" fill="none"/><path d="M16 9.5C13 11,12 13,12.5 16C13 19,14.5 21,16 22.5" stroke="white" stroke-width="1.2" fill="none" stroke-linecap="round"/></svg>
+                </div>
+                <span>Boissons<br>de qualité</span>
+              </div>
+              <div class="distrib-icon-item">
+                <div class="distrib-icon-circle">
+                  <svg viewBox="0 0 32 32" width="20" height="20" fill="none"><path d="M8 20l5-5 4 4 7-8" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </div>
+                <span>Facilité<br>d'entretien</span>
+              </div>
+            </div>
+            <p class="distrib-desc">Conçu pour les petits et moyens volumes, le Barista Compact offre la même qualité de café que sa version XL dans un format réduit. Idéal pour les <strong>bureaux de 10 à 30 personnes</strong>, salles d'attente et espaces de repos.</p>
+            <div class="distrib-fiche">
+              <p class="distrib-fiche-title">Fiche technique</p>
+              <ul class="distrib-fiche-list">
+                <li>Capacité 500 gobelets</li>
+                <li>Contenance unique : 20cl</li>
+                <li>Écran tactile 21 pouces</li>
+                <li>Faible encombrement — 45cm de large</li>
+              </ul>
+            </div>
+            <a href="#contact" class="btn-noir" style="margin-top:2rem;display:inline-block;">Demander une démo →</a>
+          </div>
+          <div class="distrib-right">
+            <div class="distrib-photo-placeholder">
+              <!-- Remplacer par : <img src="distributeur-compact.jpg" alt="Barista Compact" style="width:100%;height:100%;object-fit:contain;"> -->
+              <div class="distrib-photo-inner">
+                <svg viewBox="0 0 100 170" width="70" height="119" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <rect x="10" y="4" width="80" height="162" rx="5" stroke="#ccc" stroke-width="1.5" fill="none"/>
+                  <rect x="17" y="12" width="66" height="44" rx="3" fill="#f0f0ee" stroke="#ddd" stroke-width="1"/>
+                  <rect x="21" y="16" width="58" height="36" rx="2" fill="#e8e8e6" stroke="#ddd" stroke-width=".8"/>
+                  <rect x="24" y="19" width="24" height="14" rx="1.5" fill="#ddd"/>
+                  <rect x="52" y="19" width="24" height="14" rx="1.5" fill="#e0e0de"/>
+                  <circle cx="33" cy="76" r="6" stroke="#ccc" stroke-width="1" fill="none"/>
+                  <circle cx="50" cy="76" r="6" stroke="#ccc" stroke-width="1" fill="none"/>
+                  <circle cx="67" cy="76" r="6" stroke="#ccc" stroke-width="1" fill="none"/>
+                  <rect x="17" y="94" width="66" height="38" rx="2" stroke="#ddd" stroke-width="1" fill="#f5f5f3"/>
+                  <path d="M28 115 Q50 125 72 115" stroke="#ccc" stroke-width="1.2" fill="none"/>
+                  <rect x="22" y="142" width="56" height="14" rx="2" stroke="#ddd" stroke-width="1" fill="none"/>
+                </svg>
+                <p class="distrib-photo-label">Photo du<br>distributeur</p>
+                <p class="distrib-photo-sub">Remplacer par votre image</p>
+              </div>
+            </div>
+            <div class="distrib-badge">Gamme Intermédiaire</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SLIDE 3 : Barista Essential -->
+      <div class="distrib-slide" id="slide-2">
+        <div class="distrib-layout">
+          <div class="distrib-left">
+            <h3 class="distrib-model-name">Barista Essential</h3>
+            <p class="distrib-tagline">L'entrée de gamme sans compromis sur la qualité</p>
+            <div class="distrib-icons">
+              <div class="distrib-icon-item">
+                <div class="distrib-icon-circle">
+                  <svg viewBox="0 0 32 32" width="20" height="20" fill="none"><path d="M8 8h16v10a8 8 0 01-16 0V8z" stroke="white" stroke-width="1.5" fill="none"/><path d="M8 8V6M24 8V6" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg>
+                </div>
+                <span>Simple<br>d'utilisation</span>
+              </div>
+              <div class="distrib-icon-item">
+                <div class="distrib-icon-circle">
+                  <svg viewBox="0 0 32 32" width="20" height="20" fill="none"><ellipse cx="16" cy="16" rx="10" ry="7" stroke="white" stroke-width="1.5" fill="none"/><path d="M16 9.5C13 11,12 13,12.5 16C13 19,14.5 21,16 22.5" stroke="white" stroke-width="1.2" fill="none" stroke-linecap="round"/></svg>
+                </div>
+                <span>Café grain<br>frais</span>
+              </div>
+              <div class="distrib-icon-item">
+                <div class="distrib-icon-circle">
+                  <svg viewBox="0 0 32 32" width="20" height="20" fill="none"><circle cx="16" cy="16" r="10" stroke="white" stroke-width="1.5" fill="none"/><path d="M12 16l3 3 5-6" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </div>
+                <span>Rapport<br>qualité/prix</span>
+              </div>
+            </div>
+            <p class="distrib-desc">Le Barista Essential s'adresse aux structures qui souhaitent offrir à leurs collaborateurs un café de qualité, sans investissement complexe. Simple, fiable et efficace — le <strong>choix du bon sens</strong> pour démarrer.</p>
+            <div class="distrib-fiche">
+              <p class="distrib-fiche-title">Fiche technique</p>
+              <ul class="distrib-fiche-list">
+                <li>Capacité 250 gobelets</li>
+                <li>Contenance standard : 18cl</li>
+                <li>Interface à touches physiques et LED</li>
+                <li>Installation en 30 minutes chrono</li>
+              </ul>
+            </div>
+            <a href="#contact" class="btn-noir" style="margin-top:2rem;display:inline-block;">Demander une démo →</a>
+          </div>
+          <div class="distrib-right">
+            <div class="distrib-photo-placeholder">
+              <!-- Remplacer par : <img src="distributeur-essential.jpg" alt="Barista Essential" style="width:100%;height:100%;object-fit:contain;"> -->
+              <div class="distrib-photo-inner">
+                <svg viewBox="0 0 90 160" width="65" height="115" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <rect x="8" y="4" width="74" height="152" rx="5" stroke="#ccc" stroke-width="1.5" fill="none"/>
+                  <rect x="15" y="12" width="60" height="36" rx="3" fill="#f0f0ee" stroke="#ddd" stroke-width="1"/>
+                  <rect x="19" y="16" width="52" height="28" rx="2" fill="#e8e8e6" stroke="#ddd" stroke-width=".8"/>
+                  <rect x="22" y="19" width="20" height="11" rx="1.5" fill="#ddd"/>
+                  <rect x="45" y="19" width="20" height="11" rx="1.5" fill="#e0e0de"/>
+                  <circle cx="28" cy="68" r="5" stroke="#ccc" stroke-width="1" fill="none"/>
+                  <circle cx="45" cy="68" r="5" stroke="#ccc" stroke-width="1" fill="none"/>
+                  <circle cx="62" cy="68" r="5" stroke="#ccc" stroke-width="1" fill="none"/>
+                  <rect x="15" y="84" width="60" height="34" rx="2" stroke="#ddd" stroke-width="1" fill="#f5f5f3"/>
+                  <path d="M24 103 Q45 112 66 103" stroke="#ccc" stroke-width="1.2" fill="none"/>
+                  <rect x="20" y="128" width="50" height="12" rx="2" stroke="#ddd" stroke-width="1" fill="none"/>
+                </svg>
+                <p class="distrib-photo-label">Photo du<br>distributeur</p>
+                <p class="distrib-photo-sub">Remplacer par votre image</p>
+              </div>
+            </div>
+            <div class="distrib-badge">Gamme Entrée</div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- fin distrib-slides -->
+
+
+
+  </div>
+</section>
+
+<!-- ═══ POURQUOI NOUS — fond blanc ═══ -->
+<section id="pourquoi">
+  <div class="reveal">
+    <div class="section-label">Nos engagements</div>
+    <div class="pourquoi-grid">
+      <div>
+        <h2 class="section-title">Pourquoi<br>choisir<br>Solevend ?</h2>
+        <div class="pourquoi-list" style="margin-top:2.5rem;">
+          <div class="pq-item"><div class="pq-icon">📍</div><div><h4>Proximité marseillaise</h4><p>Entreprise locale, réactivité garantie. Nous connaissons Marseille et ses environs comme notre poche.</p></div></div>
+          <div class="pq-item"><div class="pq-icon">🌿</div><div><h4>Café frais & local</h4><p>Torréfaction maîtrisée à Marseille. Pas de café industriel — des grains sélectionnés pour leur qualité.</p></div></div>
+          <div class="pq-item"><div class="pq-icon">⚙️</div><div><h4>Suivi & entretien inclus</h4><p>Maintenance régulière et réapprovisionnement pris en charge — aucune contrainte pour vous.</p></div></div>
+          <div class="pq-item"><div class="pq-icon">✅</div><div><h4>Installation clé en main</h4><p>Du conseil au choix de machine jusqu'à la mise en service — vous n'avez rien à gérer.</p></div></div>
+        </div>
+      </div>
+      <div class="pourquoi-visual">
+        <div class="pq-big-bean">
+          <svg viewBox="0 0 140 140" width="110" height="110" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <ellipse cx="70" cy="70" rx="48" ry="34" stroke="#0d0d0d" stroke-width="1.5" fill="none"/>
+            <path d="M70 36C60 42,55 52,57 70C59 88,65 97,70 104" stroke="#0d0d0d" stroke-width="1.4" fill="none" stroke-linecap="round"/>
+            <path d="M63 37.5C56 45,53 57,55.5 68" stroke="#0d0d0d" stroke-width=".9" fill="none" stroke-linecap="round" opacity=".35"/>
+            <path d="M77 102.5C84 95,87 83,84.5 72" stroke="#0d0d0d" stroke-width=".9" fill="none" stroke-linecap="round" opacity=".35"/>
+          </svg>
+        </div>
+        <p class="pq-tagline">Torréfaction<br>locale,<br>service local.</p>
+        <p class="pq-sub">Marseille · Bouches-du-Rhône</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ CONTACT — fond noir ═══ -->
+<section id="contact">
+  <div class="reveal">
+    <div class="section-label">Parlons-en</div>
+    <h2 class="section-title">Contactez-<br>nous</h2>
+    <div class="contact-grid">
+      <div>
+        <p class="contact-intro">Vous souhaitez installer un distributeur dans vos locaux ou en savoir plus sur nos offres ? Contactez-nous directement.</p>
+        <div class="cinfo-list">
+          <div class="cinfo"><span class="cinfo-lbl">Contact</span><span class="cinfo-val">Benjamin Lary — Responsable technique</span></div>
+          <div class="cinfo"><span class="cinfo-lbl">Email</span><span class="cinfo-val"><a href="mailto:benjamin.solevend@gmail.com">benjamin.solevend@gmail.com</a><br><a href="mailto:solevend.distrib@gmail.com">solevend.distrib@gmail.com</a></span></div>
+          <div class="cinfo"><span class="cinfo-lbl">Tél</span><span class="cinfo-val"><a href="tel:+33782649057">+33 7 82 64 90 57</a></span></div>
+          <div class="cinfo"><span class="cinfo-lbl">Adresse</span><span class="cinfo-val">164 boulevard de Plombières<br>13014 Marseille</span></div>
+        </div>
+      </div>
+      <form class="cform" onsubmit="submitForm(event)">
+        <div class="frow"><label>Nom / Entreprise</label><input type="text" placeholder="Votre nom ou raison sociale" required></div>
+        <div class="frow"><label>Email</label><input type="email" placeholder="votre@email.com" required></div>
+        <div class="frow"><label>Message</label><textarea placeholder="Décrivez votre besoin…" required></textarea></div>
+        <button type="submit" class="fsubmit">Envoyer →</button>
+        <p class="fsuccess" id="fsuccess">✓ Message reçu. Nous vous recontacterons rapidement.</p>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ FOOTER — fond gris clair ═══ -->
+<footer>
+  <a href="#hero" class="footer-logo">SOLEVEND</a>
+  <div style="text-align:right;">
+    <p class="footer-copy">© 2025 Solevend. Tous droits réservés.</p>
+    <p class="footer-city">Marseille · Bouches-du-Rhône</p>
+  </div>
+</footer>
+
+<script>
+const cur=document.getElementById('cur'),curR=document.getElementById('curR');
+let mx=0,my=0,rx=0,ry=0;
+document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;});
+(function anim(){
+  cur.style.left=mx+'px';cur.style.top=my+'px';
+  rx+=(mx-rx)*.12;ry+=(my-ry)*.12;
+  curR.style.left=rx+'px';curR.style.top=ry+'px';
+  requestAnimationFrame(anim);
+})();
+document.querySelectorAll('a,button,.svc,.feat,.pq-item').forEach(el=>{
+  el.addEventListener('mouseenter',()=>{curR.style.width='56px';curR.style.height='56px';});
+  el.addEventListener('mouseleave',()=>{curR.style.width='36px';curR.style.height='36px';});
+});
+
+// Nav change au scroll
+const navEl=document.getElementById('nav');
+window.addEventListener('scroll',()=>{ navEl.classList.toggle('scrolled',window.scrollY>80); });
+
+// Reveal au scroll
+const obs=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{ if(e.isIntersecting) e.target.classList.add('on'); });
+},{threshold:0, rootMargin:'0px 0px -40px 0px'});
+document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
+
+// Apparition en cascade des cartes
+const obs2=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{ if(e.isIntersecting){e.target.style.opacity='1';e.target.style.transform='translateY(0)';} });
+},{threshold:0, rootMargin:'0px 0px -20px 0px'});
+document.querySelectorAll('.svc,.feat,.pq-item,.cinfo').forEach((el,i)=>{
+  el.style.opacity='0';el.style.transform='translateY(16px)';
+  el.style.transition=`opacity .5s ${i*.07}s ease,transform .5s ${i*.07}s ease`;
+  obs2.observe(el);
+});
+
+// Fallback : si IntersectionObserver ne se déclenche pas, tout afficher après 1s
+setTimeout(()=>{
+  document.querySelectorAll('.reveal:not(.on)').forEach(el=>el.classList.add('on'));
+  document.querySelectorAll('.svc,.feat,.pq-item,.cinfo').forEach(el=>{
+    el.style.opacity='1'; el.style.transform='translateY(0)';
+  });
+}, 1000);
+
+// Slider distributeurs
+let currentSlide = 0;
+const totalSlides = 3;
+function showSlide(n) {
+  currentSlide = (n + totalSlides) % totalSlides;
+  document.querySelectorAll('.distrib-slide').forEach((s,i) => s.classList.toggle('active', i === currentSlide));
+  document.querySelectorAll('.distrib-tab').forEach((t,i) => t.classList.toggle('active', i === currentSlide));
+  document.querySelectorAll('.distrib-dot').forEach((d,i) => d.classList.toggle('active', i === currentSlide));
+}
+function nextSlide() { showSlide(currentSlide + 1); }
+function prevSlide() { showSlide(currentSlide - 1); }
+
+// Formulaire contact
+function submitForm(e) {
+  e.preventDefault();
+  document.getElementById('fsuccess').style.display='block';
+  e.target.reset();
+}
+</script>
+</body>
+</html>
